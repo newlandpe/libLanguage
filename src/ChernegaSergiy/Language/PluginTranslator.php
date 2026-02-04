@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
+use pocketmine\utils\TextFormat;
 
 class PluginTranslator implements TranslatorInterface {
 
@@ -65,7 +66,7 @@ class PluginTranslator implements TranslatorInterface {
             }
         }
 
-        return $translation;
+        return TextFormat::colorize($translation);
     }
 
     /**
