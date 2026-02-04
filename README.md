@@ -20,7 +20,7 @@ projects:
     type: "plugin"
     libs:
       - src: newlandpe/libLanguage/libLanguage
-        version: ^0.0.1 # Use the latest version or a specific one
+        version: ^0.1 # Use the latest version or a specific one
 ```
 
 ## Architecture
