@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ChernegaSergiy\Language;
 
 use InvalidArgumentException;
+use MessageFormatter;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
@@ -52,8 +53,19 @@ class PluginTranslator implements TranslatorInterface {
         $translation = $this->translations[$locale][$key] ?? $this->translations[$this->defaultLocale][$key] ?? $key;
 
         // Process internal placeholders
-        foreach ($args as $placeholder => $value) {
-            $translation = str_replace('%' . $placeholder . '%', (string)$value, $translation);
+        if (str_contains($translation, '{')) {
+            // Use ICU MessageFormat for advanced formatting
+            $formatter = new MessageFormatter($locale, $translation);
+            $translation = $formatter->format($args);
+            if ($formatter->getErrorMessage() !== '') {
+                // Fallback to key if formatting failed
+                $translation = $key;
+            }
+        } else {
+            // Legacy simple replacement
+            foreach ($args as $placeholder => $value) {
+                $translation = str_replace('%' . $placeholder . '%', (string)$value, $translation);
+            }
         }
 
         // Process PlaceholderAPI placeholders if possible

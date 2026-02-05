@@ -79,7 +79,7 @@ class MyPlugin extends PluginBase {
 
 ### 2. Translating Messages
 
-Once you have your `PluginTranslator` instance, you can use its `translateFor()` or `translate()` methods. It supports nested keys using dot notation (e.g., `commands.help.title`).
+Once you have your `PluginTranslator` instance, you can use its `translateFor()` or `translate()` methods. It supports nested keys using dot notation (e.g., `commands.help.title`), ICU MessageFormat for advanced formatting (e.g., plurals), and legacy `%key%` placeholders.
 
 ```php
 <?php
@@ -90,16 +90,31 @@ use pocketmine\command\CommandSender;
 
 // ... (inside your command or event handler)
 
-public function someMethod(CommandSender $sender) {
-    // Translate for a CommandSender (Player or Console)
-    // Placeholders like %player% will be replaced.
-    $message = $this->translator->translateFor(
+public function someMethod(CommandSender $sender, int $itemCount) {
+    // Simple legacy placeholder
+    $message1 = $this->translator->translateFor(
         $sender,
-        "welcome.message",
-        ["player" => $sender->getName()]
+        "item.count",
+        ["count" => $itemCount]
     );
-    $sender->sendMessage($message);
+    
+    // Advanced ICU pluralization
+    $message2 = $this->translator->translateFor(
+        $sender,
+        "item.plural",
+        ["count" => $itemCount]
+    );
+    $sender->sendMessage($message1);
+    $sender->sendMessage($message2);
 }
+```
+
+In your language files (e.g., `en_US.yml`):
+
+```yaml
+item:
+  count: "You have %count% items."
+  plural: "{count, plural, one{You have # item.} other{You have # items.}}"
 ```
 
 ## API Reference
@@ -110,7 +125,7 @@ The concrete implementation of `TranslatorInterface` used by plugins.
 
 - `__construct(PluginBase $plugin, array $languages, ?LocaleResolverInterface $localeResolver = null, string $defaultLocale = "en_US")`: Constructor. Initializes the translator with plugin-specific languages, a locale resolver, and a default locale.
 - `translateFor(?CommandSender $sender, string $key, array $args = []): string`: Translates a message for a `CommandSender`.
-- `translate(string $locale, string $key, array $args = [], ?CommandSender $sender = null): string`: Translates a message for a specific locale. Supports internal and PlaceholderAPI placeholders.
+- `translate(string $locale, string $key, array $args = [], ?CommandSender $sender = null): string`: Translates a message for a specific locale. Supports ICU MessageFormat (e.g., `{count, plural, one{# item} other{# items}}`) for advanced pluralization and formatting, as well as legacy `%key%` placeholders for backward compatibility.
 
 ### `ChernegaSergiy\Language\LanguageLoader`
 
