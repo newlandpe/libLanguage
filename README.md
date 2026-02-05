@@ -28,7 +28,7 @@ projects:
 The `libLanguage` virion is built around a modular and extensible architecture, ensuring robust and conflict-free translation management for individual plugins.
 
 - **`PluginTranslator`**: The primary class used by your plugin. It handles translations, placeholder replacement (including PlaceholderAPI), and locale resolution.
-- **`LanguageLoader`**: A utility class to easily load translation files (YAML/JSON) from your plugin's resources or data folder.
+- **`LanguageLoader`**: A utility class to easily load translation files (YAML/JSON) from your plugin's resources or data folder. Only files with valid locale names (e.g., `en_US.yml`, `zh-CN.json`) are loaded.
 - **`LocaleResolverInterface` & `DefaultLocaleResolver`**: Defines how a player's locale is determined. By default, it uses `Player::getLocale()`.
 - **`Language`**: A simple data class representing a specific locale and its translations.
 
@@ -116,7 +116,7 @@ The concrete implementation of `TranslatorInterface` used by plugins.
 
 A utility class to load language files.
 
-- `static loadFromDirectory(string $directory): array`: Loads all `.yml` and `.yaml` files from a directory and returns an array of `Language` objects.
+- `static loadFromDirectory(string $directory): array`: Loads all `.yml`, `.yaml`, and `.json` files with valid locale names from a directory and returns an array of `Language` objects.
 
 ### `ChernegaSergiy\Language\LocaleResolverInterface`
 
