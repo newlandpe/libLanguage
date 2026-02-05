@@ -23,6 +23,9 @@ projects:
         version: ^0.1 # Use the latest version or a specific one
 ```
 
+> [!WARNING]
+> This library requires the PHP `intl` extension for ICU MessageFormat support. Ensure it's installed on your server (usually available by default in most PHP distributions).
+
 ## Architecture
 
 The `libLanguage` virion is built around a modular and extensible architecture, ensuring robust and conflict-free translation management for individual plugins.
