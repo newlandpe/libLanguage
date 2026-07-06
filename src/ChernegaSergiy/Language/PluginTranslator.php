@@ -44,6 +44,39 @@ class PluginTranslator implements TranslatorInterface {
         }
     }
 
+    public static function fromDirectory(
+        PluginBase $plugin,
+        string $directory,
+        ?LocaleResolverInterface $localeResolver = null,
+        string $defaultLocale = "en_US"
+    ): self {
+        return new self(
+            $plugin,
+            LanguageLoader::loadFromDirectory($directory),
+            $localeResolver,
+            $defaultLocale
+        );
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getLocales(): array {
+        return array_keys($this->translations);
+    }
+
+    public function hasLocale(string $locale): bool {
+        return isset($this->translations[$locale]);
+    }
+
+    public function getDefaultLocale(): string {
+        return $this->defaultLocale;
+    }
+
+    public function hasTranslation(string $locale, string $key): bool {
+        return isset($this->translations[$locale][$key]);
+    }
+
     public function translateFor(?CommandSender $sender, string $key, array $args = []): string {
         $locale = $sender instanceof Player ? $this->localeResolver->resolve($sender) : $this->defaultLocale;
         return $this->translate($locale, $key, $args, $sender);
