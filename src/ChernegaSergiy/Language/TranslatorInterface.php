@@ -8,7 +8,25 @@ use pocketmine\command\CommandSender;
 
 interface TranslatorInterface {
 
-    public function translateFor(?CommandSender $sender, string $key, array $args = []): string;
+    public function translateFor(
+        ?CommandSender $sender,
+        string $key,
+        array $args = []
+    ): string;
 
-    public function translate(string $locale, string $key, array $args = [], ?CommandSender $sender = null): string;
+    public function translate(
+        string $locale,
+        string $key,
+        array $args = [],
+        ?CommandSender $sender = null
+    ): string;
+
+    /**
+     * @return string[]
+     */
+    public function getLocales(): array;
+
+    public function hasLocale(string $locale): bool;
+
+    public function getDefaultLocale(): string;
 }
