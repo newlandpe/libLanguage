@@ -31,7 +31,7 @@ projects:
 The `libLanguage` virion is built around a modular and extensible architecture, ensuring robust and conflict-free translation management for individual plugins.
 
 - **`PluginTranslator`**: The primary class used by your plugin. It handles translations, placeholder replacement (including PlaceholderAPI), and locale resolution.
-- **`LanguageLoader`**: A utility class to easily load translation files (YAML/JSON) from your plugin's resources or data folder. Only files with valid locale names (e.g., `en_US.yml`, `zh-CN.json`) are loaded.
+- **`LanguageLoader`**: A utility class to easily load translation files (YAML/JSON) from your plugin's resources or data folder. The locale name is taken directly from the file name (e.g., `en_US.yml`, `pirate.yml`), so any locale identifier your plugin needs is supported.
 - **`LocaleResolverInterface` & `DefaultLocaleResolver`**: Defines how a player's locale is determined. By default, it uses `Player::getLocale()`.
 - **`Language`**: A simple data class representing a specific locale and its translations.
 
@@ -127,14 +127,25 @@ item:
 The concrete implementation of `TranslatorInterface` used by plugins.
 
 - `__construct(PluginBase $plugin, array $languages, ?LocaleResolverInterface $localeResolver = null, string $defaultLocale = "en_US")`: Constructor. Initializes the translator with plugin-specific languages, a locale resolver, and a default locale.
+- `static fromDirectory(PluginBase $plugin, string $directory, ?LocaleResolverInterface $localeResolver = null, string $defaultLocale = "en_US"): self`: Factory method that loads languages from a directory via `LanguageLoader::loadFromDirectory()` and builds a `PluginTranslator` in one call.
 - `translateFor(?CommandSender $sender, string $key, array $args = []): string`: Translates a message for a `CommandSender`.
 - `translate(string $locale, string $key, array $args = [], ?CommandSender $sender = null): string`: Translates a message for a specific locale. Supports ICU MessageFormat (e.g., `{count, plural, one{# item} other{# items}}`) for advanced pluralization and formatting, as well as legacy `%key%` placeholders for backward compatibility.
+- `getLocales(): string[]`: Returns the list of locales that were successfully loaded.
+- `hasLocale(string $locale): bool`: Checks whether a given locale was loaded.
+- `getDefaultLocale(): string`: Returns the locale currently used as a fallback.
+- `hasTranslation(string $locale, string $key): bool`: Checks whether a translation key exists for a given locale.
 
 ### `ChernegaSergiy\Language\LanguageLoader`
 
 A utility class to load language files.
 
 - `static loadFromDirectory(string $directory): array`: Loads all `.yml`, `.yaml`, and `.json` files with valid locale names from a directory and returns an array of `Language` objects.
+
+### `ChernegaSergiy\Language\LocaleProvider`
+
+An interface for components that expose their own `LocaleResolverInterface`, useful when a plugin wants to share a single locale resolution strategy across multiple translators.
+
+- `getLocaleResolver(): LocaleResolverInterface`: Returns the locale resolver associated with the implementing component.
 
 ### `ChernegaSergiy\Language\LocaleResolverInterface`
 
